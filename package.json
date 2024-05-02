@@ -1,0 +1,21 @@
+{
+  "name": "chat-ai-backend",
+  "version": "1.0.0",
+  "description": "Chat ai backend",
+  "main": "",
+  "scripts": {
+    "start": "ts-node-dev --env-file=.env src/main.ts"
+  },
+  "keywords": [],
+  "author": "dclavijo45",
+  "license": "MIT",
+  "dependencies": {
+    "@google/generative-ai": "0.7.1",
+    "@types/express": "4.17.21",
+    "cors": "2.8.5",
+    "express": "4.19.2"
+  },
+  "devDependencies": {
+    "ts-node-dev": "2.0.0"
+  }
+}

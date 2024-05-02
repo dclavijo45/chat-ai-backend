@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+      "allowImportingTsExtensions": true,
+      "target": "es2016",
+      "lib": [
+        "es2022",
+        "dom"
+      ],
+      "experimentalDecorators": true,
+      "emitDecoratorMetadata": true,
+      "module": "commonjs",
+      "declaration": true,
+      "declarationMap": true,
+      "emitDeclarationOnly": true,
+      "sourceMap": true,
+      "esModuleInterop": true,
+      "forceConsistentCasingInFileNames": true,
+      "skipLibCheck": true
+    }
+  }
+  
