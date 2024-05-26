@@ -9,7 +9,7 @@ import openaiController from "./controllers/openai.controller";
 const appExpress = express();
 const server = http.createServer(appExpress);
 
-appExpress.use(express.json());
+appExpress.use(express.json({ limit: "20mb" }));
 
 const corsOptions = {
   origin: ["http://localhost:4200", "https://chat-ai.dclavijo45.dev"],

@@ -1,7 +1,7 @@
-import { Content } from "@google/generative-ai";
 import OpenAI from "openai";
 import { ChatCompletionMessageParam } from "openai/resources";
 import { Stream } from "openai/streaming";
+import { IHRole, IHistory, TypePartEnum } from "../interfaces/history.model";
 
 export class OpenaiApiService {
   constructor() {
@@ -11,37 +11,80 @@ export class OpenaiApiService {
   private generateAI: OpenAI;
 
   async start(
-    userPrompt: string
+    history: IHistory
   ): Promise<Stream<OpenAI.Chat.Completions.ChatCompletionChunk>> {
+    const message: ChatCompletionMessageParam = {
+      role: IHRole.user,
+      content: [],
+    };  
+
+    const content = [];
+
+    for (const msg of history.parts) {
+      if (msg.type == TypePartEnum.image) {
+        content.push({
+          type: "image_url",
+          image_url: {
+            url: msg.text,
+            detail: "low",
+          },
+        });
+      }
+
+      if (msg.type == TypePartEnum.text) {
+        content.push({
+          type: msg.type,
+          text: msg.text,
+        });
+      }
+    }
+
+    message.content = content;
+
     const stream = await this.generateAI.chat.completions.create({
       model: "gpt-4o-2024-05-13",
-      messages: [
-        {
-          role: "user",
-          content: userPrompt,
-        }
-      ],
+      messages: [message],
       temperature: 1,
       stream: true,
+      max_tokens: 300,
     });
 
     return stream;
   }
 
   async conversation(
-    history: Content[],
-    userPrompt: string
+    history: IHistory[]
   ): Promise<Stream<OpenAI.Chat.Completions.ChatCompletionChunk>> {
-    const messages: ChatCompletionMessageParam[] = history.map((msg) => {
-      return {
-        role: msg.role == "model" ? "assistant" : "user",
-        content: msg.parts.length ? msg.parts[0].text : "",
-      };
-    });
+    const messages: ChatCompletionMessageParam[] = history.flatMap((msg) => {
+      if (!msg.parts.length) return [];
 
-    messages.push({
-      role: "user",
-      content: userPrompt,
+      const message = {
+        role: msg.role == IHRole.model ? "assistant" : "user",
+        content: [],
+      };
+
+      const content = msg.parts.map((part) => {
+        if (part.type == TypePartEnum.image) {
+          return {
+            type: "image_url",
+            image_url: {
+              url: part.text,
+              detail: "low",
+            },
+          };
+        }
+
+        if (part.type == TypePartEnum.text) {
+          return {
+            type: part.type,
+            text: part.text,
+          };
+        }
+      });
+
+      message.content = content;
+
+      return message;
     });
 
     const stream = await this.generateAI.chat.completions.create({
@@ -49,6 +92,7 @@ export class OpenaiApiService {
       messages,
       temperature: 1,
       stream: true,
+      max_tokens: 300,
     });
 
     return stream;

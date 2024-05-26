@@ -8,9 +8,9 @@ router.post("/chat/start", async (req, res) => {
 
   const openaiApiService = new OpenaiApiService();
 
-  const { prompt } = req.body;
+  const { history } = req.body;
 
-  const result = await openaiApiService.start(prompt);
+  const result = await openaiApiService.start(history);
 
   for await (const chunk of result) {
     res.write(chunk.choices[0]?.delta?.content || "");
@@ -24,9 +24,9 @@ router.post("/chat/conversation", async (req, res) => {
 
   const openaiApiService = new OpenaiApiService();
 
-  const { history, prompt } = req.body;
+  const { history } = req.body;
 
-  const result = await openaiApiService.conversation(history, prompt);
+  const result = await openaiApiService.conversation(history);
 
   for await (const chunk of result) {
     res.write(chunk.choices[0]?.delta?.content || "");

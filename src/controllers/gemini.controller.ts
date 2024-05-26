@@ -8,9 +8,9 @@ router.post("/chat/start", async (req, res) => {
   
     const geminiApiService = new GeminiApiService();
   
-    const { prompt } = req.body;
+    const { history } = req.body;
   
-    const result = await geminiApiService.start(prompt);
+    const result = await geminiApiService.start(history);
   
     for await (const chunk of result.stream) {
       res.write(chunk.text());
@@ -24,10 +24,10 @@ router.post("/chat/start", async (req, res) => {
   
     const geminiApiService = new GeminiApiService();
   
-    const { history, prompt } = req.body;
+    const { history } = req.body;
   
-    const result = await geminiApiService.conversation(history, prompt);
-  
+    const result = await geminiApiService.conversation(history);
+
     for await (const chunk of result.stream) {
       res.write(chunk.text());
     }
