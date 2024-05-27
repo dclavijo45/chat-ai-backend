@@ -5,6 +5,7 @@ import { PORT } from "./config/server.config";
 
 import geminiController from "./controllers/gemini.controller";
 import openaiController from "./controllers/openai.controller";
+import anthropicController from "./controllers/anthropic.controller";
 
 const appExpress = express();
 const server = http.createServer(appExpress);
@@ -20,6 +21,8 @@ appExpress.use(cors(corsOptions));
 appExpress.use("/gemini", geminiController);
 
 appExpress.use("/openai", openaiController);
+
+appExpress.use("/anthropic", anthropicController);
 
 server.listen(PORT, () => {
   console.log(`Http server is running on port: ${PORT}`);
