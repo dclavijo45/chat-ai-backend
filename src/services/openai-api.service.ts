@@ -42,7 +42,7 @@ export class OpenaiApiService {
     message.content = content;
 
     const stream = await this.generateAI.chat.completions.create({
-      model: "gpt-4o-2024-05-13",
+      model: "gpt-4o-2024-08-06",
       messages: [message],
       temperature: 1,
       stream: true,
