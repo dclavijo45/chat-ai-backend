@@ -45,8 +45,7 @@ export class OpenaiApiService {
       model: "gpt-4o-2024-08-06",
       messages: [message],
       temperature: 1,
-      stream: true,
-      max_tokens: 300,
+      stream: true
     });
 
     return stream;
