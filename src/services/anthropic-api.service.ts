@@ -59,7 +59,7 @@ export class AnthropicApiService {
     message.content = content;
 
     const stream = await this.generateAI.messages.stream({
-      model: "claude-3-opus-20240229",
+      model: "claude-3-5-sonnet-latest",
       messages: [message],
       temperature: 1,
       max_tokens: 300,
@@ -117,7 +117,7 @@ export class AnthropicApiService {
     });
 
     const stream = await this.generateAI.messages.stream({
-      model: "claude-3-opus-20240229",
+      model: "claude-3-5-sonnet-latest",
       messages,
       temperature: 1,
       max_tokens: 300,
