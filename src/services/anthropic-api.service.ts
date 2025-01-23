@@ -65,7 +65,6 @@ export class AnthropicApiService {
       max_tokens: 300,
     });
 
-    
     return stream;
   }
 
