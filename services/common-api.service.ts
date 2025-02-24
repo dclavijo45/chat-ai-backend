@@ -35,6 +35,16 @@ export class CommonApiService {
                     content: null,
                 };
 
+                if (modelAi == AiEngineEnum.QWENAI) {
+                    if (
+                        msg.parts.find(
+                            (part) => part.type === TypePartEnum.image
+                        )
+                    ) {
+                        throw Error('Image part type is not supported');
+                    }
+                }
+
                 if (modelAi == AiEngineEnum.DEEPSEEK) {
                     if (
                         msg.parts.find(
