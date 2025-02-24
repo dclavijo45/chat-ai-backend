@@ -1,7 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { MessageStream } from "@anthropic-ai/sdk/lib/MessageStream";
 import { ImageBlockParam } from "@anthropic-ai/sdk/resources";
-import { IHRole, IHistory, TypePartEnum } from "../interfaces/history.model";
+import { IHRole, IHistory, TypePartEnum } from "../models/message-ai.model";
 
 export class AnthropicApiService {
   constructor() {
@@ -62,7 +62,7 @@ export class AnthropicApiService {
       model: "claude-3-5-sonnet-latest",
       messages: [message],
       temperature: 1,
-      max_tokens: 300,
+      max_tokens: 3000,
     });
 
     return stream;
@@ -119,7 +119,7 @@ export class AnthropicApiService {
       model: "claude-3-5-sonnet-latest",
       messages,
       temperature: 1,
-      max_tokens: 300,
+      max_tokens: 3000,
     });
 
     return stream;

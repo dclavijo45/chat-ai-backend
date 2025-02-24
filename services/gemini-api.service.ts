@@ -4,7 +4,7 @@ import {
   GoogleGenerativeAI,
 } from "@google/generative-ai";
 import { GEMINI_API_KEY, SAFETY_SETTINGS } from "../config/gemini-api.config";
-import { IHistory, TypePartEnum } from "../interfaces/history.model";
+import { IHistory, TypePartEnum } from "../models/message-ai.model";
 
 export class GeminiApiService {
   constructor() {
@@ -15,7 +15,7 @@ export class GeminiApiService {
 
   async start(history: IHistory): Promise<GenerateContentStreamResult> {
     const model = this.generateAI.getGenerativeModel({
-      model: "gemini-1.5-flash",
+      model: "gemini-2.0-flash",
       safetySettings: SAFETY_SETTINGS,
     });
 
@@ -56,7 +56,7 @@ export class GeminiApiService {
 
   async conversation(history: IHistory[]): Promise<GenerateContentStreamResult> {
     const model = this.generateAI.getGenerativeModel({
-      model: "gemini-1.5-flash",
+      model: "gemini-2.0-flash",
       safetySettings: SAFETY_SETTINGS,
     });
 
