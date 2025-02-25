@@ -13,47 +13,6 @@ export class GeminiApiService {
 
   private generateAI: GoogleGenerativeAI;
 
-  async start(history: IHistory): Promise<GenerateContentStreamResult> {
-    const model = this.generateAI.getGenerativeModel({
-      model: "gemini-2.0-flash",
-      safetySettings: SAFETY_SETTINGS,
-    });
-
-    const contents: Content[] = [];
-
-    const content: Content = {
-      role: history.role,
-      parts: [],
-    };
-
-    history.parts.forEach((part) => {
-      if (part.type == TypePartEnum.image) {
-        const imageInfo = part.text.split(",");
-
-        content.parts.push({
-          inlineData: {
-            data: imageInfo[1],
-            mimeType: imageInfo[0].split(":")[1].split(";")[0],
-          },
-        });
-      }
-
-      if (part.type == TypePartEnum.text) {
-        content.parts.push({
-          text: part.text,
-        });
-      }
-    });
-
-    contents.push(content);
-
-    const result = await model.generateContentStream({
-      contents,
-    });
-
-    return result;
-  }
-
   async conversation(history: IHistory[]): Promise<GenerateContentStreamResult> {
     const model = this.generateAI.getGenerativeModel({
       model: "gemini-2.0-flash",

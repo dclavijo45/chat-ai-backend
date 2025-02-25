@@ -10,64 +10,6 @@ export class AnthropicApiService {
 
   private generateAI: Anthropic;
 
-  async start(history: IHistory): Promise<MessageStream> {
-    const message: Anthropic.Messages.MessageParam = {
-      role: IHRole.user,
-      content: [],
-    };
-
-    const content:
-      | string
-      | (
-          | Anthropic.Messages.TextBlockParam
-          | Anthropic.Messages.ImageBlockParam
-        )[] = [];
-
-    for (const msg of history.parts) {
-      if (msg.type == TypePartEnum.image) {
-        const imageInfo = msg.text.split(",");
-        const mimeType = imageInfo[0].split(":")[1].split(";")[0];
-        const compatibleMimeTypes = [
-          "image/jpeg",
-          "image/png",
-          "image/gif",
-          "image/webp",
-        ];
-
-        if (!compatibleMimeTypes.includes(mimeType)) {
-          continue;
-        }
-
-        content.push({
-          type: TypePartEnum.image,
-          source: {
-            data: imageInfo[1],
-            type: "base64",
-            media_type: mimeType as ImageBlockParam.Source["media_type"],
-          },
-        });
-      }
-
-      if (msg.type == TypePartEnum.text) {
-        content.push({
-          type: msg.type,
-          text: msg.text,
-        });
-      }
-    }
-
-    message.content = content;
-
-    const stream = await this.generateAI.messages.stream({
-      model: "claude-3-7-sonnet-latest",
-      messages: [message],
-      temperature: 1,
-      max_tokens: 3000,
-    });
-
-    return stream;
-  }
-
   async conversation(
     history: IHistory[]
   ): Promise<MessageStream> {
@@ -116,7 +58,7 @@ export class AnthropicApiService {
     });
 
     const stream = await this.generateAI.messages.stream({
-      model: "claude-3-5-sonnet-latest",
+      model: "claude-3-7-sonnet-latest",
       messages,
       temperature: 1,
       max_tokens: 3000,
