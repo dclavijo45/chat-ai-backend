@@ -59,7 +59,7 @@ export class AnthropicApiService {
     message.content = content;
 
     const stream = await this.generateAI.messages.stream({
-      model: "claude-3-5-sonnet-latest",
+      model: "claude-3-7-sonnet-latest",
       messages: [message],
       temperature: 1,
       max_tokens: 3000,
