@@ -31,6 +31,8 @@ export class CommonApiService {
         history: IHistory[],
         modelAi: AiEngineEnum
     ): Promise<Stream<OpenAI.Chat.Completions.ChatCompletionChunk>> {
+        let hasImage = false;
+
         const messages: ChatCompletionMessageParam[] = history.flatMap(
             (msg) => {
                 if (!msg.parts.length) return [];
@@ -40,59 +42,50 @@ export class CommonApiService {
                     content: null,
                 };
 
-                const hasImage = msg.parts.find(
+                hasImage = msg.parts.some(
                     (part) => part.type === TypePartEnum.image
                 );
 
                 if (
-                    [AiEngineEnum.QWENAI, AiEngineEnum.DEEPSEEK, AiEngineEnum.PERPLEXITY].includes(
-                        modelAi
-                    ) &&
+                    [
+                        AiEngineEnum.DEEPSEEK,
+                        AiEngineEnum.PERPLEXITY,
+                    ].includes(modelAi) &&
                     hasImage
                 ) {
                     throw Error('Image part type is not supported');
                 }
 
-                if (modelAi == AiEngineEnum.DEEPSEEK) {
-                    message.content = msg.parts[0].text;
-                } else {
-                    const content = msg.parts.map((part) => {
-                        if (part.type == TypePartEnum.image) {
-                            return {
-                                type: 'image_url',
-                                image_url: {
-                                    url: part.text,
-                                    detail: 'low',
-                                },
-                            };
-                        }
+                const content = msg.parts.map((part) => {
+                    if (part.type == TypePartEnum.image) {
+                        return {
+                            type: 'image_url',
+                            image_url: {
+                                url: part.text,
+                                detail: 'low',
+                            },
+                        };
+                    }
 
-                        if (part.type == TypePartEnum.text) {
-                            return {
-                                type: part.type,
-                                text: part.text,
-                            };
-                        }
-                    });
+                    if (part.type == TypePartEnum.text) {
+                        return {
+                            type: part.type,
+                            text: part.text,
+                        };
+                    }
+                });
 
-                    message.content = content;
-                }
+                message.content = content;
 
                 return message;
             }
-        );
-
-        const hasImage: boolean = messages.some(
-            (msg: ChatCompletionMessageParam & { content: any[] }) =>
-                msg.content.some(
-                    (part: { type: string }) => part.type === 'image_url'
-                )
         );
 
         const models = {
             [AiEngineEnum.OPENAI]: 'gpt-4o-2024-08-06',
             [AiEngineEnum.DEEPSEEK]: DeepSeeKModelsEnum.DEEPSEEK_CHAT,
             [AiEngineEnum.QWENAI]: 'qwen-max-latest',
+            [AiEngineEnum.QWENAI_VISION]: 'qwen-vl-max',
             [AiEngineEnum.GROK]: 'grok-2-latest',
             [AiEngineEnum.GROK_VISION]: 'grok-2-vision-latest',
             [AiEngineEnum.PERPLEXITY]: 'sonar-pro',
@@ -111,6 +104,8 @@ export class CommonApiService {
             case AiEngineEnum.QWENAI:
                 BASE_URL = QWENAI_API_URL;
                 API_KEY = QWENAI_API_KEY;
+
+                if (hasImage) modelAi = AiEngineEnum.QWENAI_VISION;
                 break;
 
             case AiEngineEnum.GROK:

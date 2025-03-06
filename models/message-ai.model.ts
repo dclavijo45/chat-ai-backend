@@ -64,6 +64,7 @@ export enum AiEngineEnum {
     ANTHROPIC = 'anthropic',
     DEEPSEEK = 'deepseek',
     QWENAI = 'qwenai',
+    QWENAI_VISION = 'qwenai_vision',
     MISTRAL = 'mistral',
     GROK = 'grok',
     GROK_VISION = 'grok_vision',
