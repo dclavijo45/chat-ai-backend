@@ -27,7 +27,7 @@ export class MistralApiService {
                 content: [],
             };
 
-            hasImage = msg.parts.some((part) => part.type === TypePartEnum.image);
+            hasImage = hasImage || msg.parts.some((part) => part.type === TypePartEnum.image);
 
             const content = msg.parts.map((part) => {
                 if (part.type == TypePartEnum.image) {

@@ -42,7 +42,7 @@ export class CommonApiService {
                     content: null,
                 };
 
-                hasImage = msg.parts.some(
+                hasImage = hasImage || msg.parts.some(
                     (part) => part.type === TypePartEnum.image
                 );
 
