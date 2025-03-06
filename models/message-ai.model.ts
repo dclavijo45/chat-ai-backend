@@ -65,6 +65,9 @@ export enum AiEngineEnum {
     DEEPSEEK = 'deepseek',
     QWENAI = 'qwenai',
     MISTRAL = 'mistral',
+    GROK = 'grok',
+    GROK_VISION = 'grok_vision',
+    PERPLEXITY = 'perplexity',
 }
 
 export enum StateMessageEnum {

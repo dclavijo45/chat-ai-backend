@@ -13,6 +13,11 @@ import {
     IHRole,
     TypePartEnum,
 } from '../models/message-ai.model';
+import { GROK_API_KEY, GROK_API_URL } from '../config/grok-api.config';
+import {
+    PERPLEXITY_API_KEY,
+    PERPLEXITY_API_URL,
+} from '../config/perplexity-api.config';
 
 export class CommonApiService {
     /**
@@ -35,25 +40,20 @@ export class CommonApiService {
                     content: null,
                 };
 
-                if (modelAi == AiEngineEnum.QWENAI) {
-                    if (
-                        msg.parts.find(
-                            (part) => part.type === TypePartEnum.image
-                        )
-                    ) {
-                        throw Error('Image part type is not supported');
-                    }
+                const hasImage = msg.parts.find(
+                    (part) => part.type === TypePartEnum.image
+                );
+
+                if (
+                    [AiEngineEnum.QWENAI, AiEngineEnum.DEEPSEEK, AiEngineEnum.PERPLEXITY].includes(
+                        modelAi
+                    ) &&
+                    hasImage
+                ) {
+                    throw Error('Image part type is not supported');
                 }
 
                 if (modelAi == AiEngineEnum.DEEPSEEK) {
-                    if (
-                        msg.parts.find(
-                            (part) => part.type === TypePartEnum.image
-                        )
-                    ) {
-                        throw Error('Image part type is not supported');
-                    }
-
                     message.content = msg.parts[0].text;
                 } else {
                     const content = msg.parts.map((part) => {
@@ -82,10 +82,20 @@ export class CommonApiService {
             }
         );
 
+        const hasImage: boolean = messages.some(
+            (msg: ChatCompletionMessageParam & { content: any[] }) =>
+                msg.content.some(
+                    (part: { type: string }) => part.type === 'image_url'
+                )
+        );
+
         const models = {
             [AiEngineEnum.OPENAI]: 'gpt-4o-2024-08-06',
             [AiEngineEnum.DEEPSEEK]: DeepSeeKModelsEnum.DEEPSEEK_CHAT,
             [AiEngineEnum.QWENAI]: 'qwen-max-latest',
+            [AiEngineEnum.GROK]: 'grok-2-latest',
+            [AiEngineEnum.GROK_VISION]: 'grok-2-vision-latest',
+            [AiEngineEnum.PERPLEXITY]: 'sonar-pro',
         };
 
         let BASE_URL = '';
@@ -101,6 +111,18 @@ export class CommonApiService {
             case AiEngineEnum.QWENAI:
                 BASE_URL = QWENAI_API_URL;
                 API_KEY = QWENAI_API_KEY;
+                break;
+
+            case AiEngineEnum.GROK:
+                BASE_URL = GROK_API_URL;
+                API_KEY = GROK_API_KEY;
+
+                if (hasImage) modelAi = AiEngineEnum.GROK_VISION;
+                break;
+
+            case AiEngineEnum.PERPLEXITY:
+                BASE_URL = PERPLEXITY_API_URL;
+                API_KEY = PERPLEXITY_API_KEY;
                 break;
 
             default:
