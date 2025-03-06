@@ -17,32 +17,47 @@ export class MistralApiService {
     async conversation(
         history: IHistory[]
     ): Promise<any> {
+        let hasImage = false;
+
         const messages = history.flatMap((msg) => {
             if (!msg.parts.length) return [];
 
             const message = {
                 role: msg.role == IHRole.model ? 'assistant' : 'user',
-                content: '',
+                content: [],
             };
 
-            if (msg.parts.find((part) => part.type === TypePartEnum.image)) {
-                throw Error('Image part type is not supported');
-            }
+            hasImage = msg.parts.some((part) => part.type === TypePartEnum.image);
 
-            message.content = msg.parts[0].text;
+            const content = msg.parts.map((part) => {
+                if (part.type == TypePartEnum.image) {
+                    return {
+                        type: 'image_url',
+                        imageUrl: part.text
+                    };
+                }
+
+                if (part.type == TypePartEnum.text) {
+                    return {
+                        type: part.type,
+                        text: part.text,
+                    };
+                }
+            });
+
+            message.content = content;
 
             return message;
         });
 
         const generateAI = new Mistral({
-            apiKey: MISTRAL_API_KEY,
+            apiKey: MISTRAL_API_KEY
         });
 
         const stream = await generateAI.chat.stream({
-            model: "mistral-large-latest",
+            model: hasImage ? "pixtral-12b-2409" : "mistral-large-latest",
             messages,
-            temperature: 1,
-            stream: true,
+            temperature: 1
         });
 
         return stream;
