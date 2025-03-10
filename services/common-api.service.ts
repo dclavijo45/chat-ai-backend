@@ -33,7 +33,7 @@ export class CommonApiService {
     ): Promise<Stream<OpenAI.Chat.Completions.ChatCompletionChunk>> {
         let hasImage = false;
 
-        const messages: ChatCompletionMessageParam[] = history.flatMap(
+        let messages: ChatCompletionMessageParam[] = history.flatMap(
             (msg) => {
                 if (!msg.parts.length) return [];
 
@@ -91,45 +91,55 @@ export class CommonApiService {
             [AiEngineEnum.PERPLEXITY]: 'sonar-pro',
         };
 
-        let BASE_URL = '';
-        let API_KEY = '';
-        let generateAI = null;
+        const clientOptions = {
+            [AiEngineEnum.OPENAI]: {
+                apiKey: undefined,
+                baseURL: undefined,
+            },
+            [AiEngineEnum.DEEPSEEK]: {
+                apiKey: DEEPSEEK_API_KEY,
+                baseURL: DEEPSEEK_API_URL,
+            },
+            [AiEngineEnum.QWENAI]: {
+                apiKey: QWENAI_API_KEY,
+                baseURL: QWENAI_API_URL,
+            },
+            [AiEngineEnum.GROK]: {
+                apiKey: GROK_API_KEY,
+                baseURL: GROK_API_URL,
+            },
+            [AiEngineEnum.PERPLEXITY]: {
+                apiKey: PERPLEXITY_API_KEY,
+                baseURL: PERPLEXITY_API_URL,
+            },
+        };
+
+        const generateAI = new OpenAI({
+            apiKey: clientOptions[modelAi].apiKey,
+            baseURL: clientOptions[modelAi].baseURL,
+        });
 
         switch (modelAi) {
             case AiEngineEnum.DEEPSEEK:
-                BASE_URL = DEEPSEEK_API_URL;
-                API_KEY = DEEPSEEK_API_KEY;
+                messages = messages.map((msg) => {
+                    if (msg.role == 'assistant') {
+                        msg.content = msg.content[0]['text'];
+                    }
+
+                    return msg;
+                });
                 break;
 
             case AiEngineEnum.QWENAI:
-                BASE_URL = QWENAI_API_URL;
-                API_KEY = QWENAI_API_KEY;
-
                 if (hasImage) modelAi = AiEngineEnum.QWENAI_VISION;
                 break;
 
             case AiEngineEnum.GROK:
-                BASE_URL = GROK_API_URL;
-                API_KEY = GROK_API_KEY;
-
                 if (hasImage) modelAi = AiEngineEnum.GROK_VISION;
                 break;
 
-            case AiEngineEnum.PERPLEXITY:
-                BASE_URL = PERPLEXITY_API_URL;
-                API_KEY = PERPLEXITY_API_KEY;
-                break;
-
             default:
-                generateAI = new OpenAI();
                 break;
-        }
-
-        if (generateAI == null) {
-            generateAI = new OpenAI({
-                apiKey: API_KEY,
-                baseURL: BASE_URL,
-            });
         }
 
         const stream = await generateAI.chat.completions.create({
