@@ -1,24 +1,19 @@
 import {
   Content,
-  GenerateContentStreamResult,
-  GoogleGenerativeAI,
-} from "@google/generative-ai";
+  GenerateContentResponse,
+  GoogleGenAI
+} from "@google/genai";
 import { GEMINI_API_KEY, SAFETY_SETTINGS } from "../config/gemini-api.config";
 import { IHistory, TypePartEnum } from "../models/message-ai.model";
 
 export class GeminiApiService {
   constructor() {
-    this.generateAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+    this.generateAI = new GoogleGenAI({apiKey: GEMINI_API_KEY});
   }
 
-  private generateAI: GoogleGenerativeAI;
+  private generateAI: GoogleGenAI;
 
-  async conversation(history: IHistory[]): Promise<GenerateContentStreamResult> {
-    const model = this.generateAI.getGenerativeModel({
-      model: "gemini-2.0-flash",
-      safetySettings: SAFETY_SETTINGS,
-    });
-
+  async conversation(history: IHistory[]): Promise<AsyncGenerator<GenerateContentResponse, any, any>> {
     const contents: Content[] = [];
 
     for (const msg of history) {
@@ -49,10 +44,14 @@ export class GeminiApiService {
       contents.push(content);
     }
 
-    const result = await model.generateContentStream({
-      contents,
+    const response = this.generateAI.models.generateContentStream({
+        model: 'gemini-2.5-flash-preview-05-20',
+        contents,
+        config: {
+            safetySettings: SAFETY_SETTINGS,
+        }
     });
 
-    return result;
+    return response;
   }
 }

@@ -65,8 +65,8 @@ io.on('connection', (socket: Socket) => {
                         request.payload.history
                     );
 
-                    for await (const chunk of resultGemini.stream) {
-                        response.payload.messageChunk = chunk.text();
+                    for await (const chunk of resultGemini) {
+                        response.payload.messageChunk = chunk.text || '';
                         socket.emit('message', response);
                     }
 
