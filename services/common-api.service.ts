@@ -82,7 +82,7 @@ export class CommonApiService {
         );
 
         const models = {
-            [AiEngineEnum.OPENAI]: 'gpt-4o-2024-08-06',
+            [AiEngineEnum.OPENAI]: 'gpt-4.1-2025-04-14',
             [AiEngineEnum.DEEPSEEK]: DeepSeeKModelsEnum.DEEPSEEK_CHAT,
             [AiEngineEnum.QWENAI]: 'qwen-max-latest',
             [AiEngineEnum.QWENAI_VISION]: 'qwen-vl-max',
