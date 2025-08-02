@@ -86,7 +86,7 @@ export class CommonApiService {
             [AiEngineEnum.DEEPSEEK]: DeepSeeKModelsEnum.DEEPSEEK_CHAT,
             [AiEngineEnum.QWENAI]: 'qwen-max-latest',
             [AiEngineEnum.QWENAI_VISION]: 'qwen-vl-max',
-            [AiEngineEnum.GROK]: 'grok-2-latest',
+            [AiEngineEnum.GROK]: 'grok-4-latest',
             [AiEngineEnum.GROK_VISION]: 'grok-2-vision-latest',
             [AiEngineEnum.PERPLEXITY]: 'sonar-pro',
         };
