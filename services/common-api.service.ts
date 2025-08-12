@@ -82,8 +82,8 @@ export class CommonApiService {
         );
 
         const models = {
-            [AiEngineEnum.OPENAI]: 'gpt-5-2025-08-07',
-            [AiEngineEnum.DEEPSEEK]: DeepSeeKModelsEnum.DEEPSEEK_CHAT,
+            [AiEngineEnum.OPENAI]: 'gpt-5',
+            [AiEngineEnum.DEEPSEEK]: DeepSeeKModelsEnum.DEEPSEEK_REASONER,
             [AiEngineEnum.QWENAI]: 'qwen-max-latest',
             [AiEngineEnum.QWENAI_VISION]: 'qwen-vl-max',
             [AiEngineEnum.GROK]: 'grok-4-latest',
