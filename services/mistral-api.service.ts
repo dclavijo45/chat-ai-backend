@@ -1,10 +1,9 @@
 import { Mistral } from '@mistralai/mistralai';
 import { MISTRAL_API_KEY } from '../config/mistral-api.config';
 import {
-    AiEngineEnum,
     IHistory,
     IHRole,
-    TypePartEnum,
+    TypePartEnum
 } from '../models/message-ai.model';
 
 export class MistralApiService {

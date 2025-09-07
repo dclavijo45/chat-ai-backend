@@ -1,6 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { MessageStream } from "@anthropic-ai/sdk/lib/MessageStream";
-import { ImageBlockParam } from "@anthropic-ai/sdk/resources";
 import { IHRole, IHistory, TypePartEnum } from "../models/message-ai.model";
 
 export class AnthropicApiService {
@@ -39,7 +38,7 @@ export class AnthropicApiService {
             source: {
               data: imageInfo[1],
               type: "base64",
-              media_type: mimeType as ImageBlockParam.Source["media_type"],
+              media_type: mimeType,
             },
           };
         }
