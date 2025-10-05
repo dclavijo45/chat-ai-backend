@@ -13,6 +13,11 @@ export interface MessageAiRequest {
      * @description The conversation ID of message.
      */
     conversationId: string;
+
+    /**
+     * @description The authentication token (Firebase ID token).
+     */
+    authToken: string;
 }
 
 export interface MessageAiResponse {

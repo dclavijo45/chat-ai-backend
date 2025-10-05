@@ -1,17 +1,14 @@
-import express, { Application } from 'express';
+import express, {Application} from 'express';
 import http from 'http';
-import { Socket, Server as SocketIOServer } from 'socket.io';
-import { GlobalMessage } from './models/global-message.model';
-import {
-    AiEngineEnum,
-    MessageAiRequest,
-    MessageAiResponse,
-    StateMessageEnum,
-} from './models/message-ai.model';
-import { AnthropicApiService } from './services/anthropic-api.service';
-import { CommonApiService } from './services/common-api.service';
-import { GeminiApiService } from './services/gemini-api.service';
-import { MistralApiService } from './services/mistral-api.service';
+import {Server as SocketIOServer, Socket} from 'socket.io';
+import {GlobalMessage} from './models/global-message.model';
+import {AiEngineEnum, MessageAiRequest, MessageAiResponse, StateMessageEnum,} from './models/message-ai.model';
+import {AnthropicApiService} from './services/anthropic-api.service';
+import {CommonApiService} from './services/common-api.service';
+import {GeminiApiService} from './services/gemini-api.service';
+import {MistralApiService} from './services/mistral-api.service';
+import {AuthService} from "./services/auth.service.ts";
+import {USERS_LIST_ALLOWED} from "./config/server.config.ts";
 
 const app: Application = express();
 const server: http.Server = http.createServer(app);
@@ -23,6 +20,7 @@ const anthropicApiService = new AnthropicApiService();
 const geminiApiService = new GeminiApiService();
 const commonApiService = new CommonApiService();
 const mistralApiService = new MistralApiService();
+const authService = new AuthService();
 
 io.on('connection', (socket: Socket) => {
     socket.on('ping', (data: GlobalMessage<string>) => {
@@ -33,6 +31,32 @@ io.on('connection', (socket: Socket) => {
         socket.emit('pong', response);
     });
 
+    socket.on('authorize', async (request: GlobalMessage<{ authToken: string }>) => {
+        const response: GlobalMessage<{ authorized: boolean; message: string }> = {
+            payload: { authorized: false, message: '' }
+        }
+
+        try {
+            const authUser = await authService.verifyToken(request.payload.authToken);
+            const usersAllowed = USERS_LIST_ALLOWED.split(',').map(u => u.trim());
+
+            if (!usersAllowed.includes(authUser.email)) {
+                response.payload.authorized = false;
+                response.payload.message = 'User not allowed';
+                socket.emit('authorized', response);
+                return;
+            }
+
+            response.payload.authorized = true;
+            response.payload.message = 'Authorized';
+        } catch (e) {
+            response.payload.authorized = false;
+            response.payload.message = 'Authentication failed';
+        } finally {
+            socket.emit('authorized', response);
+        }
+    })
+
     socket.on('message', async (request: GlobalMessage<MessageAiRequest>) => {
         const response: GlobalMessage<MessageAiResponse> = {
             payload: {
@@ -41,6 +65,27 @@ io.on('connection', (socket: Socket) => {
                 state: StateMessageEnum.STREAMING,
             },
         };
+
+        try {
+            const authUser = await authService.verifyToken(request.payload.authToken);
+            const usersAllowed = USERS_LIST_ALLOWED.split(',').map(u => u.trim());
+
+            if (!usersAllowed.includes(authUser.email)) {
+                response.payload.messageChunk = 'User not allowed';
+                response.payload.state = StateMessageEnum.STREAMING;
+                socket.emit('message', response);
+
+                response.payload.state = StateMessageEnum.END_STREAMING;
+                response.payload.messageChunk = '';
+                socket.emit('message', response);
+                return;
+            }
+        } catch (e) {
+            response.payload.messageChunk = 'Unauthorized';
+            response.payload.state = StateMessageEnum.END_STREAMING;
+            socket.emit('message', response);
+            return;
+        }
 
         try {
             switch (request.payload.aiEngine) {
