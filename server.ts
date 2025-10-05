@@ -82,6 +82,9 @@ io.on('connection', (socket: Socket) => {
             }
         } catch (e) {
             response.payload.messageChunk = 'Unauthorized';
+            response.payload.state = StateMessageEnum.STREAMING;
+
+            response.payload.messageChunk = '';
             response.payload.state = StateMessageEnum.END_STREAMING;
             socket.emit('message', response);
             return;
