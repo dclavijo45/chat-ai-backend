@@ -7,7 +7,7 @@ export class AuthService {
             readFileSync("./serviceAccountKey.json", "utf8")
         );
         admin.initializeApp({
-            credential: admin.credential.cert(serviceAccount),
+            credential: admin.credential.cert(serviceAccount)
         })
     }
 
