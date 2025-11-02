@@ -1,23 +1,12 @@
 import OpenAI from 'openai';
-import { ChatCompletionMessageParam } from 'openai/resources';
-import { Stream } from 'openai/streaming';
-import {
-    DEEPSEEK_API_KEY,
-    DEEPSEEK_API_URL,
-} from '../config/deepseek-api.config';
-import { QWENAI_API_KEY, QWENAI_API_URL } from '../config/qwenai-api.config';
-import { DeepSeeKModelsEnum } from '../enums/deepseek.enum';
-import {
-    AiEngineEnum,
-    IHistory,
-    IHRole,
-    TypePartEnum,
-} from '../models/message-ai.model';
-import { GROK_API_KEY, GROK_API_URL } from '../config/grok-api.config';
-import {
-    PERPLEXITY_API_KEY,
-    PERPLEXITY_API_URL,
-} from '../config/perplexity-api.config';
+import {ChatCompletionMessageParam} from 'openai/resources';
+import {Stream} from 'openai/streaming';
+import {DEEPSEEK_API_KEY, DEEPSEEK_API_URL,} from '../config/deepseek-api.config';
+import {QWENAI_API_KEY, QWENAI_API_URL} from '../config/qwenai-api.config';
+import {DeepSeeKModelsEnum} from '../enums/deepseek.enum';
+import {AiEngineEnum, IHistory, IHRole, TypePartEnum,} from '../models/message-ai.model';
+import {GROK_API_KEY, GROK_API_URL} from '../config/grok-api.config';
+import {PERPLEXITY_API_KEY, PERPLEXITY_API_URL,} from '../config/perplexity-api.config';
 
 export class CommonApiService {
     /**
@@ -142,13 +131,11 @@ export class CommonApiService {
                 break;
         }
 
-        const stream = await generateAI.chat.completions.create({
+        return generateAI.chat.completions.create({
             model: models[modelAi],
             messages,
-            temperature: 1,
             stream: true,
+            reasoning_effort: "minimal"
         });
-
-        return stream;
     }
 }

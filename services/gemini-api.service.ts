@@ -45,10 +45,14 @@ export class GeminiApiService {
     }
 
     const response = this.generateAI.models.generateContentStream({
-        model: 'gemini-2.5-flash-preview-05-20',
+        model: 'gemini-2.5-flash',
         contents,
         config: {
             safetySettings: SAFETY_SETTINGS,
+            thinkingConfig: {
+                thinkingBudget: 0,
+                includeThoughts: false,
+            }
         }
     });
 
