@@ -71,8 +71,8 @@ export class CommonApiService {
         );
 
         const models = {
-            [AiEngineEnum.OPENAI]: 'gpt-5',
-            [AiEngineEnum.DEEPSEEK]: DeepSeeKModelsEnum.DEEPSEEK_REASONER,
+            [AiEngineEnum.OPENAI]: 'gpt-5.1',
+            [AiEngineEnum.DEEPSEEK]: DeepSeeKModelsEnum.DEEPSEEK_CHAT,
             [AiEngineEnum.QWENAI]: 'qwen-max-latest',
             [AiEngineEnum.QWENAI_VISION]: 'qwen-vl-max',
             [AiEngineEnum.GROK]: 'grok-4-latest',
@@ -135,7 +135,7 @@ export class CommonApiService {
             model: models[modelAi],
             messages,
             stream: true,
-            reasoning_effort: "minimal"
+            reasoning_effort: "none"
         });
     }
 }
