@@ -9,6 +9,3 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=3002
-
-    volumes:
-        - ./serviceAccountKey.json:/app/serviceAccountKey.json

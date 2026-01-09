@@ -1,10 +1,10 @@
 import admin from "firebase-admin";
-import { readFileSync } from "fs";
+import { SERVICE_ACCOUNT_KEY_JSON } from "../config/auth.config";
 
 export class AuthService {
     constructor() {
         const serviceAccount = JSON.parse(
-            readFileSync("./serviceAccountKey.json", "utf8")
+            SERVICE_ACCOUNT_KEY_JSON
         );
         admin.initializeApp({
             credential: admin.credential.cert(serviceAccount)
