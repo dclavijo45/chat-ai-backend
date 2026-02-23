@@ -45,7 +45,7 @@ export class GeminiApiService {
     }
 
     const response = this.generateAI.models.generateContentStream({
-        model: 'gemini-2.5-flash',
+        model: 'gemini-3.1-pro-preview',
         contents,
         config: {
             safetySettings: SAFETY_SETTINGS,
