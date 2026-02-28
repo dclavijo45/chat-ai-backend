@@ -5,7 +5,7 @@ services:
     restart: unless-stopped
     container_name: chat-ai-backend
     ports:
-      - "3002:3002"
+      - "127.0.0.1:3002:3002"
     environment:
       - NODE_ENV=production
       - PORT=3002
