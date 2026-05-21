@@ -135,7 +135,7 @@ export class CommonApiService {
             model: models[modelAi],
             messages,
             stream: true,
-            reasoning_effort: "none"
+            reasoning_effort: "medium"
         });
     }
 }
