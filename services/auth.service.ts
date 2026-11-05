@@ -4,7 +4,7 @@ import { SERVICE_ACCOUNT_KEY_JSON } from "../config/auth.config";
 export class AuthService {
     constructor() {
         const serviceAccount = JSON.parse(
-            SERVICE_ACCOUNT_KEY_JSON
+            atob(SERVICE_ACCOUNT_KEY_JSON)
         );
         admin.initializeApp({
             credential: admin.credential.cert(serviceAccount)
